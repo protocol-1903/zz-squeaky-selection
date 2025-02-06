@@ -1,0 +1,10 @@
+{
+	"name": "zz-squeaky-selection",
+	"version": "1.0.0",
+	"title": "Squeaky Selection",
+	"author": "protocol_1903",
+	"description": "Reduces the selection box of entities so using selection tools has more fine control.",
+  "homepage": "https://discord.gg/K3fXMGVc4z",
+	"factorio_version": "2.0",
+	"dependencies": ["base"]
+}
