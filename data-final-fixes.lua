@@ -111,57 +111,37 @@ local prototypes = {
 local percent = 1 - (settings.startup["selection-box-shrink-percent"].value / 100)
 local amount = settings.startup["selection-box-shrink-int"].value
 
+local function norm_pos(position)
+  if position.x then
+    return { position.x, position.y }
+  end
+  return position
+end
+
+local function norm_box(box)
+  if box.left_top then
+    return { norm_pos(box.left_top), norm_pos(box.right_bottom) }
+  end
+  return { norm_pos(box[1]), norm_pos(box[2]) }
+end
+
 for _, category in pairs(prototypes) do
   for p, prototype in pairs(data.raw[category] or {}) do
 
     if settings.startup["selection-collision-box-unify"].value and prototype.collision_box then
-      if prototype.collision_box.left_top then
-        prototype.selection_box = {
-          {
-            prototype.collision_box.left_top[1],
-            prototype.collision_box.left_top[2]
-          },
-          {
-            prototype.collision_box.right_bottom[1],
-            prototype.collision_box.right_bottom[2]
-          }
-        }
-      else
-        prototype.selection_box = {
-          {
-            prototype.collision_box[1][1],
-            prototype.collision_box[1][2]
-          },
-          {
-            prototype.collision_box[2][1],
-            prototype.collision_box[2][2]
-          }
-        }
-      end
+      prototype.selection_box = norm_box(prototype.collision_box)
     elseif prototype.selection_box then
-      if prototype.selection_box.left_top then
-        prototype.selection_box = {
-          {
-            prototype.selection_box.left_top[1] * percent + amount,
-            prototype.selection_box.left_top[2] * percent + amount
-          },
-          {
-            prototype.selection_box.right_bottom[1] * percent - amount,
-            prototype.selection_box.right_bottom[2] * percent - amount
-          }
+      prototype.selection_box = norm_box(prototype.selection_box)
+      prototype.selection_box = {
+        {
+          prototype.selection_box[1][1] * percent + amount,
+          prototype.selection_box[1][2] * percent + amount
+        },
+        {
+          prototype.selection_box[2][1] * percent - amount,
+          prototype.selection_box[2][2] * percent - amount
         }
-      else
-        prototype.selection_box = {
-          {
-            prototype.selection_box[1][1] * percent + amount,
-            prototype.selection_box[1][2] * percent + amount
-          },
-          {
-            prototype.selection_box[2][1] * percent - amount,
-            prototype.selection_box[2][2] * percent - amount
-          }
-        }
-      end
+      }
     end
   end
 end
